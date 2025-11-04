@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Design Dash - UI Designer Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Pantalla de inicio -->
+    <div id="pantalla-inicio">
+        <div id="encabezado-inicio">
+            <img src="Assets/Codi_Animado.gif" alt="Design Dash Logo Animado" id="logo-imagen">
+            <h1>Design Dash</h1>
+        </div>
+        <button id="btn-iniciar">Iniciar</button>
+    </div>
+
+    <!-- Interfaz del diseñador -->
+    <div id="interfaz-disenador" style="display: none;">
+
+        <!-- Header superior -->
+        <header class="topbar" role="banner">
+            <div class="topbar__brand">
+                <!-- GIF oculto por CSS -->
+                <img src="Assets/Codi_Animado.gif" alt="" class="topbar__logo" />
+                <span class="topbar__title">Design Dash</span>
+            </div>
+
+            <div class="topbar__right">
+                <div class="topbar__meta">
+                    <span id="cronometro">00:00</span>
+                    <span class="reto-actual">RETO ACTUAL</span>
+                </div>
+
+                <nav class="topbar__actions" aria-label="acciones">
+                    <button class="topbar__btn" id="btn-salir" type="button">Salir</button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Layout de dos columnas: componentes + área de trabajo -->
+        <div class="workspace">
+            <aside id="panel-componentes" aria-label="Componentes">
+            <!-- BÚSQUEDA -->
+            <div id="panel-search">
+                <input
+                type="text"
+                id="component-search"
+                placeholder="Buscar componentes…"
+                aria-label="Buscar componentes"
+                />
+            </div>
+
+            <!-- GRUPOS -->
+            <details class="component-group" open>
+                <summary>
+                <span>Botones</span>
+                <span class="group-count"></span>
+                </summary>
+                <div class="group-body">
+                <div class="componente" draggable="true" id="comp-boton-primario"
+                    data-tags="boton btn primario call to action acción primary">
+                    <i data-lucide="mouse-pointer"></i>Botón Primario
+                </div>
+                <div class="componente" draggable="true" id="comp-boton-secundario"
+                    data-tags="boton btn secundario secondary alterno">
+                    <i data-lucide="square"></i>Botón Secundario
+                </div>
+                </div>
+            </details>
+
+            <details class="component-group">
+                <summary>
+                <span>Campos de texto</span>
+                <span class="group-count"></span>
+                </summary>
+                <div class="group-body">
+                <div class="componente" draggable="true" id="comp-campo-entrada"
+                    data-tags="input campo entrada texto field text">
+                    <i data-lucide="type"></i>Campo de entrada
+                </div>
+                <div class="componente" draggable="true" id="comp-area-texto"
+                    data-tags="textarea area texto párrafo descripcion">
+                    <i data-lucide="text-align-start"></i>Área de texto
+                </div>
+                <div class="componente" draggable="true" id="comp-etiqueta"
+                    data-tags="label etiqueta título texto pequeño">
+                    <i data-lucide="tag"></i>Etiqueta
+                </div>
+                </div>
+            </details>
+
+            <details class="component-group">
+                <summary>
+                <span>Media</span>
+                <span class="group-count"></span>
+                </summary>
+                <div class="group-body">
+                <div class="componente" draggable="true" id="comp-imagen"
+                    data-tags="img imagen media foto picture graphic">
+                    <i data-lucide="image"></i>Imagen
+                </div>
+                </div>
+            </details>
+            </aside>
+
+
+            <main id="area-trabajo">
+                <div id="reto-header">
+                    <p>Crea una página web de animales extintos</p>
+                </div>
+
+                <div id="area-drop" aria-label="Área de juego / lienzo de diseño">
+                    <h1>Animales extintos</h1>
+                    <!--<div id="placeholder-imagen">Arrastra un elemento</div>-->
+                </div>
+
+                <div id="controles-inferiores">
+                    <div id="papelera" class="control-trash" draggable="false">
+                        <i data-lucide="trash-2"></i>
+                        <span>Eliminar</span>
+                    </div>
+                    
+                    <div class="control-right">
+                        <button class="control-btn" id="btn-revisar">✓ Revisar/Subir</button>
+                        <button class="control-btn" id="btn-reiniciar">Reiniciar</button>
+                        <button class="control-btn" id="btn-siguiente">Siguiente reto ></button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
