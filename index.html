@@ -13,9 +13,15 @@
     <div id="pantalla-inicio">
         <div id="encabezado-inicio">
             <img src="Assets/Codi_Animado.gif" alt="Design Dash Logo Animado" id="logo-imagen">
-            <h1>Design Dash</h1>
+                <div class="logo-frame-inicio">
+                    <img src="Assets/Logo.png" alt="Logo" class="start__title">
+                </div>
         </div>
-        <button id="btn-iniciar">Iniciar</button>
+        <div class="btn-frame">
+            <img id="btn-iniciar" src="Assets/Iniciar.png" alt="Iniciar juego">
+        </div>
+        <button id="btn-borrar-progreso">🧹 Borrar progreso</button>
+
     </div>
 
     <!-- Interfaz del diseñador -->
@@ -26,7 +32,9 @@
             <div class="topbar__brand">
                 <!-- GIF oculto por CSS -->
                 <img src="Assets/Codi_Animado.gif" alt="" class="topbar__logo" />
-                <span class="topbar__title">Design Dash</span>
+                <div class="logo-frame">
+                    <img src="Assets/Logo.png" alt="Logo" class="topbar__title">
+                </div>
             </div>
 
             <div class="topbar__right">
@@ -125,9 +133,15 @@
                     </div>
                     
                     <div class="control-right">
-                        <button class="control-btn" id="btn-revisar">✓ Revisar/Subir</button>
-                        <button class="control-btn" id="btn-reiniciar">Reiniciar</button>
-                        <button class="control-btn" id="btn-siguiente">Siguiente reto ></button>
+                    <div id="btn-revisar" class="image-btn" role="button" tabindex="0" aria-label="Revisar o subir">
+                        <img src="Assets/Check.png" alt="" draggable="false">
+                    </div>
+                    <div id="btn-reiniciar" class="image-btn" role="button" tabindex="0" aria-label="Reiniciar">
+                        <img src="Assets/Reset.png" alt="" draggable="false">
+                    </div>
+                    <div id="btn-siguiente" class="image-btn-next wide" role="button" tabindex="0" aria-label="Siguiente reto">
+                        <img src="Assets/SiguienteReto.png" alt="" draggable="false">
+                    </div>
                     </div>
                 </div>
             </main>

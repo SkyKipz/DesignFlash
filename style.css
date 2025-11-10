@@ -54,28 +54,72 @@ body {
     margin: 0; 
 }
 
-/* Botón de inicio */
+/* Marco del botón */
+.btn-frame {
+  width: 200px;              /* 🔧 tamaño visible (ajusta según diseño) */
+  height: 100px;
+  overflow: hidden;          /* 🔥 recorta los bordes */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 25px;       /* bordes suaves */
+  cursor: pointer;
+  background: transparent;
+}
+
+/* Imagen del botón */
 #btn-iniciar {
-    background-color: #4CAF50; 
-    color: white;
-    padding: 15px 35px;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.2em;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+  width: 132%;                /* 🔧 redimensiona la imagen */
+  height: auto;
+  /*object-fit: contain;       /* mantiene proporción sin deformar */
+  object-position: center;   /* centra el recorte */
+  transition: transform 0.25s ease;
 }
 
-#btn-iniciar:hover {
-    background-color: #45a049;
-    transform: translateY(-2px);
+/* Efectos */
+.btn-frame:hover {
+  transform: scale(1.05);
+  /*box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);*/
 }
 
-#btn-iniciar:active {
-    background-color: #3e8e41;
-    transform: translateY(0);
+.btn-frame:active {
+  transform: scale(0.95);
+}
+
+
+.logo-frame-inicio {
+  width: auto;
+  height: 130px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff00;
+}
+
+.start__title {
+  width: 230%;
+  height: 230%;
+  object-fit: cover;
+  object-position: center;
+}
+
+#btn-borrar-progreso {
+  background-color: #d9534f;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-top: 15px;
+}
+
+#btn-borrar-progreso:hover {
+  background-color: #c9302c;
+  transform: scale(1.05);
 }
 
 /* ========================================================= */
@@ -115,11 +159,25 @@ body {
     display: none; /* Oculta el GIF del logo */
 }
 
-.topbar__title {
-    font-weight: 700;
-    letter-spacing: 0.2px;
-    color: #fff;
+.logo-frame {
+  width: auto;
+  height: 40px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff00;
 }
+
+.topbar__title {
+  width: 250%;
+  height: 250%;
+  object-fit: cover;
+  object-position: center;
+}
+
+
+
 
 .topbar__right {
     display: flex;
@@ -356,25 +414,68 @@ body {
   transform: translateY(-1px);
 }
 
-.control-btn {
-    padding: 12px 25px;
-    border: none;
-    border-radius: 8px;
-    font-size: 1em;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+/* Frame recortador del botón (reemplaza al .control-btn visualmente) */
+.image-btn {
+  width: 40px;            /* 🔧 tamaño visible del frame */
+  height: 40px;
+  overflow: hidden;        /* 🔥 recorta los bordes del sprite 1024x1024 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 30px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease;
+  box-shadow: 0 3px 10px rgba(0,0,0,.08);
 }
 
-#btn-revisar { background-color: #28a745; color: white; }
-#btn-revisar:hover { background-color: #218838; transform: translateY(-2px); }
+.image-btn-next {
+  width: 80px;            /* 🔧 tamaño visible del frame */
+  height: 40px;
+  overflow: hidden;        /* 🔥 recorta los bordes del sprite 1024x1024 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease;
+  box-shadow: 0 3px 10px rgba(0,0,0,.08);
+}
 
-#btn-reiniciar { background-color: #6c757d; color: white; }
-#btn-reiniciar:hover { background-color: #5a6268; transform: translateY(-2px); }
+/* Variante más ancha para “Siguiente” si la necesitas */
+.image-btn.wide { width: 210px; }
 
-#btn-siguiente { background-color: #007bff; color: white; }
-#btn-siguiente:hover { background-color: #0069d9; transform: translateY(-2px); }
+/* Imagen interna (el sprite cuadrado) */
+.image-btn img {
+  width: 210%;
+  height: auto;
+  object-fit: contain;     /* mantiene proporción sin deformar */
+  object-position: center; /* centra el recorte; ajusta si el arte no está centrado */
+  pointer-events: none;    /* el clic lo recibe el frame */
+  user-select: none;
+}
+
+.image-btn-next img {
+  width: 130%;
+  height: auto;
+  object-fit: contain;     /* mantiene proporción sin deformar */
+  object-position: center; /* centra el recorte; ajusta si el arte no está centrado */
+  pointer-events: none;    /* el clic lo recibe el frame */
+  user-select: none;
+}
+
+/* Estados */
+.image-btn:hover { transform: scale(1.05); box-shadow: 0 6px 18px rgba(124,58,237,.18); }
+.image-btn:active { transform: scale(0.97); }
+.image-btn[aria-disabled="true"] { opacity: .55; pointer-events: none; }
+
+.image-btn-next:hover { transform: scale(1.05); box-shadow: 0 6px 18px rgba(124,58,237,.18); }
+.image-btn-next:active { transform: scale(0.97); }
+.image-btn-next[aria-disabled="true"] { opacity: .55; pointer-events: none; }
+
 
 /* Elementos arrastrados */
 .elemento-en-diseno {

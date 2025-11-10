@@ -64,6 +64,8 @@ const btnSalir = document.getElementById('btn-salir');
 const searchInput = document.getElementById('component-search');
 const componentGroups = document.querySelectorAll('#panel-componentes .component-group');
 const papelera = document.getElementById('papelera');
+const STORAGE_KEY = 'designDashProgress_v1';
+const btnBorrar = document.getElementById('btn-borrar-progreso');
 
 let tiempoRestante = 0;
 let intervaloCronometro = null;
@@ -94,8 +96,8 @@ function actualizarCronometro() {
         cronometroDisplay.style.borderColor = '#e74c3c';
         cronometroDisplay.classList.add('low-time');
     } else {
-        cronometroDisplay.style.color = '#e67e22';
-        cronometroDisplay.style.borderColor = '#e67e22';
+        cronometroDisplay.style.color = '#ffffff';
+        cronometroDisplay.style.borderColor = '#ffffff';
         cronometroDisplay.classList.remove('low-time');
     }
 }
@@ -106,8 +108,8 @@ function iniciarCronometro(duracionSegundos) {
     cronometroDisplay.textContent = formatoTiempo(tiempoRestante);
     intervaloCronometro = setInterval(actualizarCronometro, 1000);
     cronometroDisplay.classList.remove('low-time');
-    cronometroDisplay.style.color = '#e67e22';
-    cronometroDisplay.style.borderColor = '#e67e22';
+    cronometroDisplay.style.color = '#ffffff';
+    cronometroDisplay.style.borderColor = '#ffffff';
 }
 
 function detenerCronometro() {
@@ -119,7 +121,7 @@ function manejarFinTiempo() {
     btnRevisar.disabled = true;
     btnReiniciar.disabled = true;
     alert("⌛ ¡Tiempo agotado! No lograste completar el reto a tiempo.");
-    btnSiguiente.disabled = false;
+    setDivDisabled('btn-siguiente', false);
 }
 
 // ===============================================
@@ -260,90 +262,125 @@ function cargarReto(index) {
     retoHeaderP.textContent = reto.descripcion + recordText;
     retoActualSpan.textContent = `RETO ACTUAL ${index + 1} de ${retos.length}`;
     reiniciarAreaDiseno();
-    btnSiguiente.disabled = true;
+    setDivDisabled('btn-siguiente', true);
 
     // Dibuja guía de targets
     dibujarPlantilla(reto, areaDrop);
 }
 
 function verificarReto() {
-    if (tiempoRestante <= 0 && !intervaloCronometro) {
-        alert("El tiempo ya expiró. Presiona 'Siguiente reto' para continuar.");
-        return;
+  if (tiempoRestante <= 0 && !intervaloCronometro) {
+    alert("El tiempo ya expiró. Presiona 'Siguiente reto' para continuar.");
+    // Guarda dónde nos quedamos para retomar
+    const p = loadProgress();
+    p.lastRetoIndex = retoActualIndex;
+    saveProgress(p);
+    return;
+  }
+
+  const reto = retos[retoActualIndex];
+  const elementosColocados = document.querySelectorAll('#area-drop .elemento-en-diseno');
+
+  // ----- Completitud -----
+  let conteoActual = {};
+  elementosColocados.forEach(el => {
+    const idOriginal = el.id.replace(/-copia-\d+/, '');
+    conteoActual[idOriginal] = (conteoActual[idOriginal] || 0) + 1;
+  });
+
+  let faltantes = [];
+  for (const [elementoId, cantidadNecesaria] of Object.entries(reto.elementosNecesarios)) {
+    const cantidadActual = conteoActual[elementoId] || 0;
+    if (cantidadActual < cantidadNecesaria) {
+      const nombre = document.getElementById(elementoId)?.textContent || elementoId;
+      faltantes.push(`${cantidadNecesaria - cantidadActual}× ${nombre}`);
     }
+  }
 
-    const reto = retos[retoActualIndex];
-    const elementosColocados = document.querySelectorAll('#area-drop .elemento-en-diseno');
+  const totalRequeridos = Object.values(reto.elementosNecesarios).reduce((a, b) => a + b, 0);
+  const totalPresentes = Object.entries(reto.elementosNecesarios)
+    .reduce((a, [id, need]) => a + Math.min(need, (conteoActual[id] || 0)), 0);
 
-    // ----- Completitud -----
-    let conteoActual = {};
-    elementosColocados.forEach(el => {
-        const idOriginal = el.id.replace(/-copia-\d+/, '');
-        conteoActual[idOriginal] = (conteoActual[idOriginal] || 0) + 1;
-    });
+  const completitud = totalRequeridos > 0 ? (totalPresentes / totalRequeridos) : 1; // 0..1
 
-    let faltantes = [];
-    for (const [elementoId, cantidadNecesaria] of Object.entries(reto.elementosNecesarios)) {
-        const cantidadActual = conteoActual[elementoId] || 0;
-        if (cantidadActual < cantidadNecesaria) {
-            faltantes.push(`${cantidadNecesaria - cantidadActual}× ${document.getElementById(elementoId).textContent}`);
-        }
-    }
+  // ----- Layout (posición) -----
+  const { layoutScore, details } = computeLayoutScore(reto, areaDrop);
+  const pen = overlapPenalty(areaDrop); // 0..1
+  const layoutConPenalizacion = Math.max(0, layoutScore * (1 - 0.5 * pen)); // hasta -50%
 
-    const totalRequeridos = Object.values(reto.elementosNecesarios).reduce((a, b) => a + b, 0);
-    const totalPresentes = Object.entries(reto.elementosNecesarios)
-        .reduce((a, [id, need]) => a + Math.min(need, (conteoActual[id] || 0)), 0);
+  // ----- Puntos -----
+  // Mezcla 50% completitud + 50% layout
+  let puntos = Math.round(100 * (0.5 * completitud + 0.5 * layoutConPenalizacion));
 
-    const completitud = totalRequeridos > 0 ? (totalPresentes / totalRequeridos) : 1; // 0..1
+  // Bonus por tiempo (máx +10)
+  const bonusTiempo = Math.min(10, Math.floor((tiempoRestante / (reto.tiempoLimite || 1)) * 10));
+  puntos += bonusTiempo;
 
-    // ----- Layout (posición) -----
-    const { layoutScore, details } = computeLayoutScore(reto, areaDrop);
-    const pen = overlapPenalty(areaDrop); // 0..1
-    const layoutConPenalizacion = Math.max(0, layoutScore * (1 - 0.5 * pen)); // hasta -50%
+  // Mensaje de detalle
+  let mensajeDetalle =
+    `Puntuación de layout: ${(layoutScore * 100).toFixed(0)}%` +
+    (pen > 0 ? ` (penalización por solapes: ${(pen * 100).toFixed(0)}%)` : ``) +
+    `\nCompletitud: ${(completitud * 100).toFixed(0)}%` +
+    `\nBonus por tiempo: +${bonusTiempo}` +
+    `\n\n➤ Puntos obtenidos: ${puntos}`;
 
-    // ----- Puntos -----
-    // Mezcla 50% completitud + 50% layout (ajusta ponderación a tu gusto)
-    let puntos = Math.round(100 * (0.5 * completitud + 0.5 * layoutConPenalizacion));
+  // Si faltan componentes, no aprueba
+  if (faltantes.length) {
+    alert(`🚨 Faltan: ${faltantes.join(', ')}\n\n${mensajeDetalle}\n\n¡Sigue ajustando!`);
+    setDivDisabled('btn-siguiente', true);
 
-    // Bonus por tiempo (máx +10)
-    const bonusTiempo = Math.min(10, Math.floor((tiempoRestante / (reto.tiempoLimite || 1)) * 10));
-    puntos += bonusTiempo;
+    // Guarda lugar para retomar
+    const p = loadProgress();
+    p.lastRetoIndex = retoActualIndex;
+    saveProgress(p);
 
-    // Mensaje de detalle
-    let mensajeDetalle =
-        `Puntuación de layout: ${(layoutScore * 100).toFixed(0)}%` +
-        (pen > 0 ? ` (penalización por solapes: ${(pen * 100).toFixed(0)}%)` : ``) +
-        `\nCompletitud: ${(completitud * 100).toFixed(0)}%` +
-        `\nBonus por tiempo: +${bonusTiempo}` +
-        `\n\n➤ Puntos obtenidos: ${puntos}`;
+    console.table(details); // diagnóstico
+    return;
+  }
 
-    if (faltantes.length) {
-        alert(`🚨 Faltan: ${faltantes.join(', ')}\n\n` + mensajeDetalle + `\n\n¡Sigue ajustando!`);
-        btnSiguiente.disabled = true;
-        // detalle técnico a consola
-        console.table(details);
-        return;
-    }
+  // ----- Aprobado -----
+  detenerCronometro();
+  const tiempoUsado = reto.tiempoLimite - tiempoRestante;
+  let mensaje = "✅ ¡Diseño APROBADO!\n\n" + mensajeDetalle;
 
-    // Si está completo, aprueba y calcula tiempos/records
-    detenerCronometro();
-    const tiempoUsado = reto.tiempoLimite - tiempoRestante;
-    let mensaje = "✅ ¡Diseño APROBADO!\n\n" + mensajeDetalle;
+  if (reto.tiempoRecord === null || tiempoUsado < reto.tiempoRecord) {
+    reto.tiempoRecord = tiempoUsado;
+    mensaje += `\n✨ ¡Nuevo récord! Tiempo: ${formatoTiempo(tiempoUsado)}`;
+  } else {
+    mensaje += `\nTiempo: ${formatoTiempo(tiempoUsado)}`;
+  }
 
-    if (reto.tiempoRecord === null || tiempoUsado < reto.tiempoRecord) {
-        reto.tiempoRecord = tiempoUsado;
-        mensaje += `\n✨ ¡Nuevo récord! Tiempo: ${formatoTiempo(tiempoUsado)}`;
-    } else {
-        mensaje += `\nTiempo: ${formatoTiempo(tiempoUsado)}`;
-    }
+  // Habilitar "Siguiente"
+  setDivDisabled('btn-siguiente', false);
 
-    totalPuntos += puntos;   // acumula puntos del juego
-    score++;                 // retos superados
-    btnSiguiente.disabled = false;
+  // Acumular puntos en la sesión actual
+  totalPuntos += puntos;
+  score++;
 
-    // detalle técnico por target
-    console.table(details);
-    alert(mensaje);
+  // ===== Guardar progreso persistente =====
+  const progress = loadProgress();
+  const id = reto.id;
+
+  // Mejor puntaje por reto
+  const previo = progress.puntosPorReto?.[id] || 0;
+  progress.puntosPorReto = progress.puntosPorReto || {};
+  progress.puntosPorReto[id] = Math.max(previo, puntos);
+
+  // Marcar reto como pasado
+  progress.passedPorReto = progress.passedPorReto || {};
+  progress.passedPorReto[id] = true;
+
+  // Recalcular total de puntos (suma mejores)
+  progress.totalPuntos = Object.values(progress.puntosPorReto).reduce((a, b) => a + b, 0);
+
+  // Dónde retomar: primer reto no pasado (o el siguiente si todos pasados)
+  progress.lastRetoIndex = computeResumeIndex(progress);
+
+  saveProgress(progress);
+  // ========================================
+
+  console.table(details); // diagnóstico por target
+  alert(mensaje);
 }
 
 function avanzarReto() {
@@ -356,17 +393,18 @@ function avanzarReto() {
 // ===============================================
 
 function salirAlInicio() {
-    if (!confirm("¿Seguro que quieres salir al menú principal? Se perderá el progreso actual.")) return;
-    detenerCronometro();
-    document.querySelectorAll('#area-drop .elemento-en-diseno').forEach(el => el.remove());
-    const placeholder = document.getElementById('placeholder-imagen');
-    if (placeholder) placeholder.style.display = 'block';
-    retoActualIndex = 0;
-    score = 0;
-    totalPuntos = 0; // reset de puntos
-    interfazDisenador.style.display = 'none';
-    pantallaInicio.style.display = 'flex';
-    document.body.style.display = 'flex';
+  if (!confirm("¿Seguro que quieres salir al menú principal? Se perderá el progreso del reto actual en el lienzo, pero se conservará tu avance.")) return;
+  detenerCronometro();
+  document.querySelectorAll('#area-drop .elemento-en-diseno').forEach(el => el.remove());
+  const placeholder = document.getElementById('placeholder-imagen');
+  if (placeholder) placeholder.style.display = 'block';
+
+  // NO resetees localStorage aquí
+  // Conservamos puntajes y retos pasados
+
+  interfazDisenador.style.display = 'none';
+  pantallaInicio.style.display = 'flex';
+  document.body.style.display = 'flex';
 }
 
 // ===== dialogo =====
@@ -465,6 +503,54 @@ function showMascotIntro() {
     renderStep();
 }
 
+function setDivDisabled(elOrId, disabled) {
+  const el = typeof elOrId === 'string' ? document.getElementById(elOrId) : elOrId;
+  if (!el) return;
+  el.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+}
+
+function isDivDisabled(elOrId) {
+  const el = typeof elOrId === 'string' ? document.getElementById(elOrId) : elOrId;
+  return el && el.getAttribute('aria-disabled') === 'true';
+}
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return { puntosPorReto: {}, passedPorReto: {}, totalPuntos: 0, lastRetoIndex: 0 };
+    const data = JSON.parse(raw);
+    // sane defaults
+    return {
+      puntosPorReto: data.puntosPorReto || {},
+      passedPorReto: data.passedPorReto || {},
+      totalPuntos: typeof data.totalPuntos === 'number' ? data.totalPuntos : 0,
+      lastRetoIndex: typeof data.lastRetoIndex === 'number' ? data.lastRetoIndex : 0,
+    };
+  } catch {
+    return { puntosPorReto: {}, passedPorReto: {}, totalPuntos: 0, lastRetoIndex: 0 };
+  }
+}
+
+function saveProgress(progress) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+}
+
+// Devuelve el índice del primer reto NO pasado; si todos pasados, el último
+function computeResumeIndex(progress) {
+  for (let i = 0; i < retos.length; i++) {
+    const id = retos[i].id;
+    if (!progress.passedPorReto[id]) return i;
+  }
+  return Math.min(retos.length - 1, progress.lastRetoIndex || 0);
+}
+
+// Nueva partida
+function resetProgress() {
+  localStorage.removeItem('designDashProgress_v1');
+  localStorage.removeItem('skipMascotIntro');
+  alert("🧹 Progreso borrado.");
+}
+
 // ===============================================
 // EVENTOS PRINCIPALES
 // ===============================================
@@ -474,9 +560,18 @@ document.addEventListener('DOMContentLoaded', () => {
         pantallaInicio.style.display = 'none';
         interfazDisenador.style.display = 'flex';
         document.body.style.display = 'block';
+        const progress = loadProgress();
+        retoActualIndex = computeResumeIndex(progress);
+
+        totalPuntos = progress.totalPuntos || 0;
+        score = Object.values(progress.passedPorReto).filter(Boolean).length;
+
         cargarReto(retoActualIndex);
 
-        showMascotIntro();
+        // === Intro de la mascota solo en el reto 1 ===
+        if (typeof showMascotIntro === 'function' && retoActualIndex === 0) {
+            showMascotIntro();
+        }
     });
     if (btnReiniciar) btnReiniciar.addEventListener('click', reiniciarAreaDiseno);
     if (btnRevisar) btnRevisar.addEventListener('click', verificarReto);
@@ -616,6 +711,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (elemento && elemento.classList.contains('elemento-en-diseno')) {
         elemento.remove();
+        }
+    });
+    }
+
+    if (btnBorrar) {
+    btnBorrar.addEventListener('click', () => {
+        if (confirm("¿Seguro que quieres borrar todo tu progreso? No podrás deshacer esta acción.")) {
+        resetProgress();
         }
     });
     }
