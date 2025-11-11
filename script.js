@@ -459,19 +459,40 @@ function avanzarReto() {
 // ===============================================
 
 function salirAlInicio() {
-  if (!confirm("¿Seguro que quieres salir al menú principal? Se perderá el progreso del reto actual en el lienzo, pero se conservará tu avance.")) return;
+  const progress = loadProgress();
+
+  if (allLevelsCompleted(progress)) {
+    // 👇 Sin confirmación si ya terminó todo
+    prepareNewRun();  // reinicia la vuelta, conserva logros y récords por reto
+
+    // Limpia UI del área
+    detenerCronometro();
+    document.querySelectorAll('#area-drop .elemento-en-diseno').forEach(el => el.remove());
+    const placeholder = document.getElementById('placeholder-imagen');
+    if (placeholder) placeholder.style.display = 'block';
+
+    // Vuelve al menú
+    interfazDisenador.style.display = 'none';
+    pantallaInicio.style.display = 'flex';
+    document.body.style.display = 'flex';
+
+    return;
+  }
+
+  // 🔒 Si NO terminó todos, mantener confirmación
+  if (!confirm("¿Seguro que quieres salir al menú principal? Se perderá el progreso actual.")) return;
+
   detenerCronometro();
   document.querySelectorAll('#area-drop .elemento-en-diseno').forEach(el => el.remove());
   const placeholder = document.getElementById('placeholder-imagen');
   if (placeholder) placeholder.style.display = 'block';
 
-  // NO resetees localStorage aquí
-  // Conservamos puntajes y retos pasados
-
+  // No reseteamos localStorage aquí (conserva avance/retomar)
   interfazDisenador.style.display = 'none';
   pantallaInicio.style.display = 'flex';
   document.body.style.display = 'flex';
 }
+
 
 // ===== dialogo =====
 function showMascotIntro() {
@@ -812,6 +833,21 @@ function checkSymmetry(area) {
     const ok = ratio >= 0.8;
     return ok;
 }
+
+function allLevelsCompleted(progress) {
+    if (!progress?.passedPorReto) return false;
+    return retos.every(r => !!progress.passedPorReto[r.id]);
+}
+
+// Resetea SOLO el progreso de la vuelta actual (no logros ni récords por reto)
+function prepareNewRun() {
+    const p = loadProgress();
+    p.passedPorReto = {};      // vuelves a jugar todos
+    p.totalPuntos = 0;         // puntaje de la vuelta se reinicia
+    p.lastRetoIndex = 0;       // arranca en nivel 1
+    saveProgress(p);
+}
+
 
 // ===============================================
 // EVENTOS PRINCIPALES
