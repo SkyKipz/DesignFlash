@@ -53,66 +53,79 @@
         <div class="workspace">
             <aside id="panel-componentes" aria-label="Componentes">
             <!-- BÚSQUEDA -->
-            <div id="panel-search">
-                <input
-                type="text"
-                id="component-search"
-                placeholder="Buscar componentes…"
-                aria-label="Buscar componentes"
-                />
-            </div>
+                <div id="panel-search">
+                    <input
+                    type="text"
+                    id="component-search"
+                    placeholder="Buscar componentes…"
+                    aria-label="Buscar componentes"
+                    />
+                </div>
 
-            <!-- GRUPOS -->
-            <details class="component-group" open>
-                <summary>
-                <span>Botones</span>
-                <span class="group-count"></span>
-                </summary>
-                <div class="group-body">
-                <div class="componente" draggable="true" id="comp-boton-primario"
-                    data-tags="boton btn primario call to action acción primary">
-                    <i data-lucide="mouse-pointer"></i>Botón Primario
-                </div>
-                <div class="componente" draggable="true" id="comp-boton-secundario"
-                    data-tags="boton btn secundario secondary alterno">
-                    <i data-lucide="square"></i>Botón Secundario
-                </div>
-                </div>
-            </details>
+                <!-- GRUPOS -->
+                <details class="component-group" open>
+                    <summary>
+                        <span>Botones</span>
+                        <span class="group-count"></span>
+                    </summary>
+                    <div class="group-body">
+                        <div class="componente" draggable="true" id="comp-boton-primario"
+                            data-tags="boton btn primario call to action acción primary">
+                            <i data-lucide="mouse-pointer"></i>Botón Primario
+                        </div>
+                        <div class="componente" draggable="true" id="comp-boton-secundario"
+                            data-tags="boton btn secundario secondary alterno">
+                            <i data-lucide="square"></i>Botón Secundario
+                        </div>
+                    </div>
+                </details>
 
-            <details class="component-group">
-                <summary>
-                <span>Campos de texto</span>
-                <span class="group-count"></span>
-                </summary>
-                <div class="group-body">
-                <div class="componente" draggable="true" id="comp-campo-entrada"
-                    data-tags="input campo entrada texto field text">
-                    <i data-lucide="type"></i>Campo de entrada
-                </div>
-                <div class="componente" draggable="true" id="comp-area-texto"
-                    data-tags="textarea area texto párrafo descripcion">
-                    <i data-lucide="text-align-start"></i>Área de texto
-                </div>
-                <div class="componente" draggable="true" id="comp-etiqueta"
-                    data-tags="label etiqueta título texto pequeño">
-                    <i data-lucide="tag"></i>Etiqueta
-                </div>
-                </div>
-            </details>
+                <details class="component-group">
+                    <summary>
+                    <span>Campos de texto</span>
+                    <span class="group-count"></span>
+                    </summary>
+                    <div class="group-body">
+                        <div class="componente" draggable="true" id="comp-campo-entrada"
+                            data-tags="input campo entrada texto field text">
+                            <i data-lucide="type"></i>Campo de entrada
+                        </div>
+                        <div class="componente" draggable="true" id="comp-area-texto"
+                            data-tags="textarea area texto párrafo descripcion">
+                            <i data-lucide="text-align-start"></i>Área de texto
+                        </div>
+                        <div class="componente" draggable="true" id="comp-titulo"
+                            data-tags="titulo title encabezado texto grande">
+                            <i data-lucide="type-outline"></i>Título
+                        </div>
+                    </div>
+                </details>
 
-            <details class="component-group">
-                <summary>
-                <span>Media</span>
-                <span class="group-count"></span>
-                </summary>
-                <div class="group-body">
-                <div class="componente" draggable="true" id="comp-imagen"
-                    data-tags="img imagen media foto picture graphic">
-                    <i data-lucide="image"></i>Imagen
-                </div>
-                </div>
-            </details>
+                <details class="component-group">
+                    <summary>
+                        <span>Media</span>
+                        <span class="group-count"></span>
+                    </summary>
+                    <div class="group-body">
+                        <div class="componente" draggable="true" id="comp-imagen"
+                            data-tags="img imagen media foto picture graphic">
+                            <i data-lucide="image"></i>Imagen
+                        </div>
+                    </div>
+                </details>
+                
+                <details class="component-group">
+                    <summary>
+                        <span>Estructura</span>
+                        <span class="group-count"></span>
+                    </summary>
+                    <div class="group-body">
+                        <div class="componente" draggable="true" id="comp-header"
+                            data-tags="header encabezado barra superior top">
+                            <i data-lucide="panel-top-close"></i>Header
+                        </div>
+                    </div>
+                </details>
             </aside>
 
 
@@ -122,7 +135,7 @@
                 </div>
 
                 <div id="area-drop" aria-label="Área de juego / lienzo de diseño">
-                    <h1>Animales extintos</h1>
+                    <!--<h1>Animales extintos</h1>-->
                     <!--<div id="placeholder-imagen">Arrastra un elemento</div>-->
                 </div>
 

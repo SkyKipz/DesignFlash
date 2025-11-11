@@ -20,7 +20,15 @@ const retos = [
             { type: "comp-boton-primario", x: 300, y: 300, w: 180, h: 44,  weight: 0.30 }
         ],
         tiempoLimite: 300,
-        tiempoRecord: null
+        tiempoRecord: null,
+        spriteSet: 'nivel1',
+        spriteOverrides: {},
+        fondo: {
+            background: 'url("Assets/fondos/nivel1.png")',
+            size: 'cover',
+            position: 'top center',
+            opacity: 0.22
+        },
     },
     {
         id: 2,
@@ -66,6 +74,26 @@ const componentGroups = document.querySelectorAll('#panel-componentes .component
 const papelera = document.getElementById('papelera');
 const STORAGE_KEY = 'designDashProgress_v1';
 const btnBorrar = document.getElementById('btn-borrar-progreso');
+const SPRITE_SETS = {
+  nivel1: {
+    "comp-boton-primario": { src: "Assets/sprites/nivel1/header.png",  w: 160, h: 48,  cls: "sprite--button sprite--nivel1" },
+    "comp-boton-secundario":{ src: "Assets/sprites/nivel1/btn_secondary.png",w: 160, h: 48,  cls: "sprite--button sprite--nivel1" },
+    "comp-campo-entrada":   { src: "Assets/sprites/nivel1/input.png",       w: 320, h: 44,  cls: "sprite--input  sprite--nivel1" },
+    "comp-area-texto":      { src: "Assets/sprites/nivel1/textarea.png",    w: 320, h: 96,  cls: "sprite--input  sprite--nivel1" },
+    "comp-imagen":          { src: "Assets/sprites/nivel1/image_frame.png", w: 220, h: 140, cls: "sprite--image  sprite--nivel1" },
+    "comp-header":          { src: "Assets/sprites/nivel1/header.png",      w: 480, h: 72,  cls: "sprite--header sprite--nivel1" }
+  },                                
+  neon: {
+    "comp-boton-primario": { src: "Assets/sprites/neon/btn_primary.png",  w: 160, h: 48,  cls: "sprite--button sprite--neon" },
+    "comp-boton-secundario":{ src: "Assets/sprites/neon/btn_secondary.png",w: 160, h: 48,  cls: "sprite--button sprite--neon" },
+    "comp-campo-entrada":   { src: "Assets/sprites/neon/input.png",       w: 320, h: 44,  cls: "sprite--input  sprite--neon" },
+    "comp-area-texto":      { src: "Assets/sprites/neon/textarea.png",    w: 320, h: 96,  cls: "sprite--input  sprite--neon" },
+    "comp-imagen":          { src: "Assets/sprites/neon/image_frame.png", w: 220, h: 140, cls: "sprite--image  sprite--neon" },
+    "comp-header":          { src: "Assets/sprites/neon/header.png",      w: 480, h: 72,  cls: "sprite--header sprite--neon" }
+  }
+};
+
+let CURRENT_SPRITE_SET = 'nivel1';
 
 let tiempoRestante = 0;
 let intervaloCronometro = null;
@@ -258,6 +286,8 @@ function cargarReto(index) {
         return;
     }
     const reto = retos[index];
+    aplicarFondoReto(reto);
+    CURRENT_SPRITE_SET = reto?.spriteSet || 'nivel1';
     let recordText = reto.tiempoRecord ? ` (Récord: ${formatoTiempo(reto.tiempoRecord)})` : '';
     retoHeaderP.textContent = reto.descripcion + recordText;
     retoActualSpan.textContent = `RETO ACTUAL ${index + 1} de ${retos.length}`;
@@ -504,51 +534,113 @@ function showMascotIntro() {
 }
 
 function setDivDisabled(elOrId, disabled) {
-  const el = typeof elOrId === 'string' ? document.getElementById(elOrId) : elOrId;
-  if (!el) return;
-  el.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+    const el = typeof elOrId === 'string' ? document.getElementById(elOrId) : elOrId;
+    if (!el) return;
+    el.setAttribute('aria-disabled', disabled ? 'true' : 'false');
 }
 
 function isDivDisabled(elOrId) {
-  const el = typeof elOrId === 'string' ? document.getElementById(elOrId) : elOrId;
-  return el && el.getAttribute('aria-disabled') === 'true';
+    const el = typeof elOrId === 'string' ? document.getElementById(elOrId) : elOrId;
+    return el && el.getAttribute('aria-disabled') === 'true';
 }
 
 function loadProgress() {
-  try {
+    try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return { puntosPorReto: {}, passedPorReto: {}, totalPuntos: 0, lastRetoIndex: 0 };
     const data = JSON.parse(raw);
     // sane defaults
     return {
-      puntosPorReto: data.puntosPorReto || {},
-      passedPorReto: data.passedPorReto || {},
-      totalPuntos: typeof data.totalPuntos === 'number' ? data.totalPuntos : 0,
-      lastRetoIndex: typeof data.lastRetoIndex === 'number' ? data.lastRetoIndex : 0,
+        puntosPorReto: data.puntosPorReto || {},
+        passedPorReto: data.passedPorReto || {},
+        totalPuntos: typeof data.totalPuntos === 'number' ? data.totalPuntos : 0,
+        lastRetoIndex: typeof data.lastRetoIndex === 'number' ? data.lastRetoIndex : 0,
     };
-  } catch {
+    } catch {
     return { puntosPorReto: {}, passedPorReto: {}, totalPuntos: 0, lastRetoIndex: 0 };
-  }
+    }
 }
 
 function saveProgress(progress) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
 }
 
 // Devuelve el índice del primer reto NO pasado; si todos pasados, el último
 function computeResumeIndex(progress) {
-  for (let i = 0; i < retos.length; i++) {
+    for (let i = 0; i < retos.length; i++) {
     const id = retos[i].id;
     if (!progress.passedPorReto[id]) return i;
-  }
-  return Math.min(retos.length - 1, progress.lastRetoIndex || 0);
+    }
+    return Math.min(retos.length - 1, progress.lastRetoIndex || 0);
 }
 
 // Nueva partida
 function resetProgress() {
-  localStorage.removeItem('designDashProgress_v1');
-  localStorage.removeItem('skipMascotIntro');
-  alert("🧹 Progreso borrado.");
+    localStorage.removeItem('designDashProgress_v1');
+    localStorage.removeItem('skipMascotIntro');
+    alert("Progreso borrado.");
+}
+
+function aplicarFondoReto(reto) {
+    const f = reto?.fondo || {};
+    areaDrop.style.setProperty('--drop-bg', f.background || 'none');
+    areaDrop.style.setProperty('--drop-bg-size', f.size || 'cover');
+    areaDrop.style.setProperty('--drop-bg-pos', f.position || 'top center');
+    areaDrop.style.setProperty('--drop-bg-opacity', String(f.opacity ?? 0.25));
+}
+
+function applySprite(el, baseType) {
+    const cfg = SPRITES[baseType];
+    if (!cfg) return false;
+
+    el.classList.add('sprite');
+    if (cfg.cls) el.classList.add(cfg.cls);
+
+    // Tamaño fijo (puedes hacerlo resizable en otra mejora)
+    el.style.width  = cfg.w + 'px';
+    el.style.height = cfg.h + 'px';
+
+    el.style.backgroundImage = `url("${cfg.src}")`;
+
+    // Oculta cualquier texto placeholder
+    el.textContent = '';
+    return true;
+}
+
+// Extrae el tipo base "comp-xxx" de un id que puede ser copia
+function baseTypeFromId(id) {
+    return id.replace(/-copia-\d+$/, '');
+}
+
+function getSpriteConfig(baseType) {
+    const reto = retos[retoActualIndex];
+    // override por reto
+    if (reto?.spriteOverrides && reto.spriteOverrides[baseType]) {
+    return reto.spriteOverrides[baseType];
+    }
+    // del set activo
+    const setName = reto?.spriteSet || CURRENT_SPRITE_SET || 'nivel1';
+    const set = SPRITE_SETS[setName] || SPRITE_SETS.nivel1;
+    return set[baseType];
+}
+
+function applySprite(el, baseType) {
+    const cfg = getSpriteConfig(baseType);
+    if (!cfg) return false;
+
+    el.classList.add('sprite');
+    if (cfg.cls) {
+    cfg.cls.split(/\s+/).forEach(c => c && el.classList.add(c));
+    }
+
+    // Tamaño/imagen
+    el.style.width  = cfg.w + 'px';
+    el.style.height = cfg.h + 'px';
+    el.style.backgroundImage = `url("${cfg.src}")`;
+
+    // Limpia cualquier texto placeholder
+    el.textContent = '';
+    return true;
 }
 
 // ===============================================
@@ -588,33 +680,79 @@ document.addEventListener('DOMContentLoaded', () => {
 
     areaDrop.addEventListener('dragover', e => { e.preventDefault(); areaDrop.classList.add('drag-over'); });
     areaDrop.addEventListener('dragleave', () => areaDrop.classList.remove('drag-over'));
-    areaDrop.addEventListener('drop', e => {
+    areaDrop.addEventListener('drop', (e) => {
         e.preventDefault();
         areaDrop.classList.remove('drag-over');
+
         const source = e.dataTransfer.getData('source');
-        if (source === 'panel') {
-            const idOriginal = e.dataTransfer.getData('text/plain');
-            const original = document.getElementById(idOriginal);
-            const nuevo = original.cloneNode(true);
-            elementoCounter++;
-            nuevo.removeAttribute('draggable');
-            nuevo.classList.remove('componente');
-            nuevo.classList.add('elemento-en-diseno');
-            nuevo.id = `${idOriginal}-copia-${elementoCounter}`;
-            if (nuevo.id.includes('comp-boton-primario')) nuevo.textContent = "Botón de Acción";
-            else if (nuevo.id.includes('comp-campo-entrada')) nuevo.textContent = "Campo de Entrada";
-            else if (nuevo.id.includes('comp-imagen')) nuevo.textContent = "[Imagen]";
-            const rect = areaDrop.getBoundingClientRect();
-            const x = e.clientX - rect.left - nuevo.offsetWidth / 2;
-            const y = e.clientY - rect.top - nuevo.offsetHeight / 2;
-            nuevo.style.position = 'absolute';
-            nuevo.style.left = `${Math.max(0, Math.min(x, rect.width - nuevo.offsetWidth))}px`;
-            nuevo.style.top = `${Math.max(0, Math.min(y, rect.height - nuevo.offsetHeight))}px`;
-            nuevo.setAttribute('draggable', 'true');
-            areaDrop.appendChild(nuevo);
-            const ph = document.getElementById('placeholder-imagen');
-            if (ph) ph.style.display = 'none';
+        if (source !== 'panel') return;
+
+        const idOriginal = e.dataTransfer.getData('text/plain');
+        const original = document.getElementById(idOriginal);
+        if (!original) return;
+
+        // Clonar
+        const nuevo = original.cloneNode(true);
+        elementoCounter++;
+
+        // Limpiar/ajustar clases
+        nuevo.removeAttribute('draggable');
+        nuevo.classList.remove('componente');
+        nuevo.classList.add('elemento-en-diseno');
+        nuevo.id = `${idOriginal}-copia-${elementoCounter}`;
+
+        // === APLICAR SPRITE SEGÚN EL RETO ===
+        const baseType = baseTypeFromId(idOriginal);
+        const hadSprite = applySprite(nuevo, baseType);
+
+        // Fallback si no hay sprite definido para este tipo
+        if (!hadSprite) {
+            if (baseType.includes('comp-boton-primario')) nuevo.textContent = "Botón de Acción";
+            else if (baseType.includes('comp-campo-entrada')) nuevo.textContent = "Campo de Entrada";
+            else if (baseType.includes('comp-imagen')) nuevo.textContent = "[Imagen]";
         }
+
+        // Colocación (centrado donde soltó)
+        const rect = areaDrop.getBoundingClientRect();
+
+        // Usa tamaño conocido si hay sprite; si no, usa offsetWidth/Height tras añadir al DOM
+        let placeW, placeH;
+        const cfg = getSpriteConfig(baseType);
+        if (cfg) {
+            placeW = cfg.w;
+            placeH = cfg.h;
+            // anticipamos tamaño exacto
+            nuevo.style.width  = placeW + 'px';
+            nuevo.style.height = placeH + 'px';
+        }
+
+        // Añade temporalmente para medir si no hay cfg
+        if (!cfg) {
+            nuevo.style.position = 'absolute';
+            nuevo.style.left = '-9999px';
+            nuevo.style.top  = '-9999px';
+            areaDrop.appendChild(nuevo);
+            placeW = nuevo.offsetWidth;
+            placeH = nuevo.offsetHeight;
+            nuevo.remove(); // reubicaremos bien
+        }
+
+        const x = e.clientX - rect.left - (placeW / 2);
+        const y = e.clientY - rect.top  - (placeH / 2);
+
+        nuevo.style.position = 'absolute';
+        nuevo.style.left = `${Math.max(0, Math.min(x, rect.width  - placeW))}px`;
+        nuevo.style.top  = `${Math.max(0, Math.min(y, rect.height - placeH))}px`;
+
+        // Rehabilita drag interno
+        nuevo.setAttribute('draggable', 'true');
+
+        // Inserta definitivamente
+        areaDrop.appendChild(nuevo);
+
+        // Oculta placeholder si aplica
+        const ph = document.getElementById('placeholder-imagen');
+        if (ph) ph.style.display = 'none';
     });
     areaDrop.addEventListener('dragstart', e => {
         if (e.target.classList.contains('elemento-en-diseno')) {

@@ -687,3 +687,42 @@ body {
   .mascota-bubble::after, .mascota-bubble::before { display: none; }
   .mascota-avatar { justify-content: start; }
 }
+
+/* Asegura stacking y recorte del fondo */
+#area-drop {
+  position: relative;          /* clave para el ::before */
+  overflow: auto;              /* puedes dejarlo en auto si necesitas scroll */
+  border-radius: 10px;         /* ya lo tienes; se hereda al fondo */
+}
+
+/* Capa de fondo solo dentro del área (debajo del contenido) */
+#area-drop::before {
+  content: "";
+  position: absolute;
+  inset: 0;                    /* ocupa todo el área-drop */
+  border-radius: inherit;      /* respeta las esquinas */
+  z-index: 0;                  /* por debajo del contenido */
+  background: var(--drop-bg, none);
+  background-size: var(--drop-bg-size, cover);
+  background-position: var(--drop-bg-pos, top center);
+  background-repeat: no-repeat;
+  opacity: var(--drop-bg-opacity, 0.25);  /* ajusta intensidad del fondo */
+  pointer-events: none;        /* no bloquea arrastres */
+}
+
+/* El contenido va por encima del fondo */
+#area-drop > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Apariencia base de un componente con sprite dentro del área de juego */
+.elemento-en-diseno.sprite {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;    /* quepa completo sin deformarse */
+  background-color: transparent;
+  border: none;                /* puedes ajustar si necesitas borde */
+  color: transparent;          /* ocultar texto si lo tuviera */
+}
+
