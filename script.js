@@ -459,40 +459,39 @@ function avanzarReto() {
 // ===============================================
 
 function salirAlInicio() {
-  const progress = loadProgress();
+    const progress = loadProgress();
 
-  if (allLevelsCompleted(progress)) {
-    // 👇 Sin confirmación si ya terminó todo
-    prepareNewRun();  // reinicia la vuelta, conserva logros y récords por reto
+    if (allLevelsCompleted(progress)) {
+        // 👇 Sin confirmación si ya terminó todo
+        prepareNewRun();  // reinicia la vuelta, conserva logros y récords por reto
 
-    // Limpia UI del área
+        // Limpia UI del área
+        detenerCronometro();
+        document.querySelectorAll('#area-drop .elemento-en-diseno').forEach(el => el.remove());
+        const placeholder = document.getElementById('placeholder-imagen');
+        if (placeholder) placeholder.style.display = 'block';
+
+        // Vuelve al menú
+        interfazDisenador.style.display = 'none';
+        pantallaInicio.style.display = 'flex';
+        document.body.style.display = 'flex';
+
+        return;
+    }
+
+    // 🔒 Si NO terminó todos, mantener confirmación
+    if (!confirm("¿Seguro que quieres salir al menú principal? Se perderá el progreso actual.")) return;
+
     detenerCronometro();
     document.querySelectorAll('#area-drop .elemento-en-diseno').forEach(el => el.remove());
     const placeholder = document.getElementById('placeholder-imagen');
     if (placeholder) placeholder.style.display = 'block';
 
-    // Vuelve al menú
+    // No reseteamos localStorage aquí (conserva avance/retomar)
     interfazDisenador.style.display = 'none';
     pantallaInicio.style.display = 'flex';
     document.body.style.display = 'flex';
-
-    return;
-  }
-
-  // 🔒 Si NO terminó todos, mantener confirmación
-  if (!confirm("¿Seguro que quieres salir al menú principal? Se perderá el progreso actual.")) return;
-
-  detenerCronometro();
-  document.querySelectorAll('#area-drop .elemento-en-diseno').forEach(el => el.remove());
-  const placeholder = document.getElementById('placeholder-imagen');
-  if (placeholder) placeholder.style.display = 'block';
-
-  // No reseteamos localStorage aquí (conserva avance/retomar)
-  interfazDisenador.style.display = 'none';
-  pantallaInicio.style.display = 'flex';
-  document.body.style.display = 'flex';
 }
-
 
 // ===== dialogo =====
 function showMascotIntro() {
