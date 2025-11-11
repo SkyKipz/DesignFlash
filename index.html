@@ -21,6 +21,7 @@
             <img id="btn-iniciar" src="Assets/Iniciar.png" alt="Iniciar juego">
         </div>
         <button id="btn-logros">🏆 Logros</button>
+        <button id="btn-ranking">🏅 Ranking</button>
         <button id="btn-borrar-progreso">🧹 Borrar progreso</button>
     </div>
     
@@ -37,6 +38,40 @@
 
             <div class="ach-footer">
             <small>Los logros se guardan en este dispositivo.</small>
+            </div>
+        </div>
+    </div>
+
+    <div id="ranking-overlay" aria-hidden="true">
+        <div class="ranking-modal" role="dialog" aria-modal="true" aria-labelledby="rk-title">
+            <div class="rk-header">
+                <h2 id="rk-title">Ranking</h2>
+                <button class="rk-close" id="rk-close" aria-label="Cerrar">✖</button>
+            </div>
+
+            <div class="rk-body">
+                <ol id="rk-list" class="rk-list"><!-- render JS --></ol>
+            </div>
+
+            <div class="rk-footer">
+                <small>Se guardan las mejores puntuaciones en este dispositivo.</small>
+            </div>
+        </div>
+    </div>
+
+    <div id="score-name-overlay" aria-hidden="true">
+        <div class="score-name-modal" role="dialog" aria-modal="true" aria-labelledby="sn-title">
+            <div class="sn-header">
+            <h3 id="sn-title">¡Nuevo puntaje!</h3>
+            </div>
+            <div class="sn-body">
+            <p>Ingresa tu nombre para guardar tu puntuación:</p>
+            <input id="sn-input" type="text" maxlength="20" placeholder="Tu nombre">
+            <div class="sn-score" id="sn-score">Puntos: 0</div>
+            </div>
+            <div class="sn-actions">
+            <button id="sn-cancel" class="btn-secundario">Cancelar</button>
+            <button id="sn-save" class="btn-primario">Guardar</button>
             </div>
         </div>
     </div>

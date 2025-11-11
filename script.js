@@ -36,9 +36,14 @@ const retos = [
     {
         id: 2,
         titulo: "Formulario de Contacto",
-        descripcion: "Diseña un formulario básico. Debe incluir un campo de entrada, un botón secundario y el título de diseño (h1).",
+        descripcion: "Arma la portada de 'Café Frida': incluye un header, un título, una imagen destacada, dos áreas de texto descriptivo, un campo de entrada y dos botones.",
         elementosNecesarios: {
+            "comp-header": 1,
+            "comp-titulo": 1,
+            "comp-imagen": 1,
+            "comp-area-texto": 2,
             "comp-campo-entrada": 1,
+            "comp-boton-primario": 1,
             "comp-boton-secundario": 1,
         },
         layoutTargets: [
@@ -90,6 +95,7 @@ const papelera = document.getElementById('papelera');
 const STORAGE_KEY = 'designDashProgress_v1';
 const btnBorrar = document.getElementById('btn-borrar-progreso');
 const ACH_STORAGE_KEY = 'designDashAchievements_v1';
+const LB_KEY = 'designDashLeaderboard_v1';
 const ACHIEVEMENTS = [
   { id: 'welcome',   title: '¡Bienvenido, Diseñador!', desc: 'Completa tu primer reto.', icon: '👋' },
   { id: 'architect', title: 'El Arquitecto Nace',      desc: 'Arrastra y suelta tu primer elemento de interfaz.', icon: '🏗️' },
@@ -443,6 +449,11 @@ function verificarReto() {
 
     const todosPasados = retos.every(r => progress.passedPorReto[r.id]);
     if (todosPasados) unlockAchievement('marathon');
+
+    if (allLevelsCompleted(progress)) {
+        const finalScore = typeof totalPuntos !== 'undefined' ? totalPuntos : (progress.totalPuntos || 0);
+        promptScoreAndSave(finalScore);
+    }
     // ========================================
 
     console.table(details); // diagnóstico por target
@@ -847,6 +858,84 @@ function prepareNewRun() {
     saveProgress(p);
 }
 
+function loadLeaderboard() {
+    try { return JSON.parse(localStorage.getItem(LB_KEY)) || []; }
+    catch { return []; }
+}
+
+function saveLeaderboard(arr) {
+    localStorage.setItem(LB_KEY, JSON.stringify(arr || []));
+}
+
+function addLeaderboardEntry(name, score) {
+    const list = loadLeaderboard();
+    list.push({ name: name || 'Anónimo', score: Number(score)||0, ts: Date.now() });
+    // ordenar por score desc, luego por fecha asc (antiguo primero si empata)
+    list.sort((a,b) => b.score - a.score || a.ts - b.ts);
+    // recortar (por ejemplo top 50)
+    saveLeaderboard(list.slice(0, 50));
+}
+
+function openRanking() {
+    renderRanking();
+    document.getElementById('ranking-overlay')?.setAttribute('aria-hidden','false');
+}
+
+function closeRanking() {
+    document.getElementById('ranking-overlay')?.setAttribute('aria-hidden','true');
+}
+
+function renderRanking() {
+    const ul = document.getElementById('rk-list');
+    if (!ul) return;
+    const list = loadLeaderboard();
+    ul.innerHTML = '';
+    if (list.length === 0) {
+        ul.innerHTML = '<li><span class="rk-name">Aún no hay puntajes.</span><span class="rk-score">—</span></li>';
+        return;
+    }
+    list.forEach((e,i) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span class="rk-name">${i+1}. ${e.name}</span><span class="rk-score">${e.score} pts</span>`;
+        ul.appendChild(li);
+    });
+}
+
+function promptScoreAndSave(finalScore, onDone) {
+    const ov = document.getElementById('score-name-overlay');
+    const input = document.getElementById('sn-input');
+    const scoreEl = document.getElementById('sn-score');
+    const btnSave = document.getElementById('sn-save');
+    const btnCancel = document.getElementById('sn-cancel');
+    if (!ov || !input || !scoreEl || !btnSave || !btnCancel) {
+        onDone && onDone();
+        return;
+    }
+
+    scoreEl.textContent = `Puntos: ${finalScore}`;
+    ov.setAttribute('aria-hidden', 'false');
+
+    const lastName = localStorage.getItem('lastPlayerName') || '';
+    input.value = lastName;
+
+    function close() {
+        ov.setAttribute('aria-hidden', 'true');
+        btnSave.removeEventListener('click', onSave);
+        btnCancel.removeEventListener('click', onCancel);
+        onDone && onDone();
+    }
+    function onSave() {
+        const name = (input.value || '').trim() || 'Anónimo';
+        localStorage.setItem('lastPlayerName', name);
+        addLeaderboardEntry(name, finalScore); // ya la tienes
+        openRanking();                         // opcional: mostrar ranking al guardar
+        close();
+    }
+    function onCancel() { close(); }
+
+    btnSave.addEventListener('click', onSave);
+    btnCancel.addEventListener('click', onCancel);
+}
 
 // ===============================================
 // EVENTOS PRINCIPALES
@@ -1081,4 +1170,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.target === achOverlay) closeAchievements();
         });
     }
+    // Ranking: abrir/cerrar
+    document.getElementById('btn-ranking')?.addEventListener('click', openRanking);
+    document.getElementById('rk-close')?.addEventListener('click', closeRanking);
+    document.getElementById('ranking-overlay')?.addEventListener('click', (e)=>{
+    if (e.target.id === 'ranking-overlay') closeRanking();
+    });
+
+    // Modal de nombre: cerrar al click fuera (opcional, aquí no cierro para obligar a elegir)
+    document.getElementById('score-name-overlay')?.addEventListener('click', (e)=>{
+    // si quieres cerrar haciendo click fuera, descomenta:
+    // if (e.target.id === 'score-name-overlay') e.currentTarget.setAttribute('aria-hidden','true');
+    });
 });
