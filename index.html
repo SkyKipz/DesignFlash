@@ -20,8 +20,25 @@
         <div class="btn-frame">
             <img id="btn-iniciar" src="Assets/Iniciar.png" alt="Iniciar juego">
         </div>
+        <button id="btn-logros">🏆 Logros</button>
         <button id="btn-borrar-progreso">🧹 Borrar progreso</button>
+    </div>
+    
+    <div id="achievements-overlay" aria-hidden="true">
+        <div class="achievements-modal" role="dialog" aria-modal="true" aria-labelledby="ach-title">
+            <div class="ach-header">
+            <h2 id="ach-title">Logros</h2>
+            <button class="ach-close" id="ach-close" aria-label="Cerrar">✖</button>
+            </div>
 
+            <div class="ach-grid" id="ach-grid">
+            <!-- Se llena por JS -->
+            </div>
+
+            <div class="ach-footer">
+            <small>Los logros se guardan en este dispositivo.</small>
+            </div>
+        </div>
     </div>
 
     <!-- Interfaz del diseñador -->

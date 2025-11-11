@@ -726,3 +726,134 @@ body {
   color: transparent;          /* ocultar texto si lo tuviera */
 }
 
+/* ========= Botón Logros ========= */
+#btn-logros {
+  background-color: #7c3aed;
+  color: #fff;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: transform .2s ease, box-shadow .2s ease, background-color .2s;
+  box-shadow: 0 6px 16px rgba(124,58,237,.18);
+}
+#btn-logros:hover { transform: translateY(-1px); }
+#btn-logros:active { transform: translateY(0); }
+
+/* ========= Modal Overlay ========= */
+#achievements-overlay {
+  position: fixed; inset: 0; z-index: 10000;
+  background: rgba(0,0,0,.45);
+  display: none; /* hidden by default */
+  align-items: center; justify-content: center;
+  padding: 16px;
+}
+#achievements-overlay[aria-hidden="false"] { display: flex; }
+
+/* ========= Modal ========= */
+.achievements-modal {
+  width: min(900px, 96vw);
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 24px 80px rgba(0,0,0,.25);
+  padding: 14px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.ach-header {
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid #eee; padding-bottom: 8px;
+}
+.ach-close {
+  background: transparent; border: none; font-size: 18px; cursor: pointer;
+}
+
+/* ========= Grid de logros ========= */
+.ach-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+  padding-top: 6px;
+}
+.ach-card {
+  border: 1px solid #eee; border-radius: 12px;
+  padding: 12px; display: grid; gap: 8px;
+  background: #fafafa;
+  position: relative;
+}
+/* Frame recortador para las medallas */
+.ach-icon-frame {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 30% 30%, #fdfdfd, #e5e7eb); /* fondo sutil */
+  border: 3px solid transparent;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.ach-icon-frame img {
+  width: 160%;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Si el logro está bloqueado, aplica escala y grises */
+.ach-locked img {
+  filter: grayscale(0.8) opacity(0.6);
+  transform: scale(0.85);
+}
+
+.ach-title { font-weight: 700; color: #1f2937; font-size: 0.98rem; }
+.ach-desc  { color: #6b7280; font-size: 0.86rem; }
+
+.ach-locked {
+  filter: grayscale(0.9) opacity(0.7);
+}
+.ach-badge {
+  position: absolute; top: 8px; right: 8px;
+  font-size: 12px; background: #10b981; color: #fff;
+  padding: 2px 8px; border-radius: 999px; display: none;
+}
+.ach-card.unlocked .ach-badge { display: inline-block; }
+
+/* Footer */
+.ach-footer { border-top: 1px solid #eee; padding-top: 8px; text-align: right; color: #6b7280; }
+
+/* Desbloqueado: dorado/brillante */
+.ach-card.unlocked .ach-icon-frame {
+  border-color: #fbbf24; /* amarillo dorado */
+  box-shadow: 0 0 12px rgba(251, 191, 36, 0.4);
+  transform: scale(1.05);
+}
+
+/* Bloqueado: gris opaco */
+.ach-locked {
+  filter: grayscale(0.8) opacity(0.6);
+  transform: scale(0.95);
+}
+
+/* Pequeño efecto hover */
+.ach-card.unlocked:hover .ach-icon-frame {
+  transform: scale(1.1);
+  box-shadow: 0 0 18px rgba(251, 191, 36, 0.6);
+}
+
+.mascota-avatar img.patpat-anim {
+  animation: patPatBump .5s ease;
+}
+@keyframes patPatBump {
+  0%   { transform: scale(1) rotate(0deg); }
+  30%  { transform: scale(1.08) rotate(-2deg); }
+  60%  { transform: scale(1.08) rotate(2deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}

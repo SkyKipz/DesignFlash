@@ -6,20 +6,21 @@ const retos = [
     {
         id: 1,
         titulo: "Página de Animales Extintos",
-        descripcion: "Crea una página de información simple. Necesitas una imagen, un botón secundario y dos áreas de texto para la descripción de la imagen.",
+        descripcion: "Crea una página de información simple. Usa un header, un título, una imagen, dos áreas de texto y un botón secundario.",
         elementosNecesarios: {
+            "comp-header": 1,
+            "comp-titulo": 1,
             "comp-imagen": 1,
-            "comp-boton-primario": 1,
-            "comp-area-texto": 2
+            "comp-area-texto": 2,
         },
         // ===== Plantilla de layout (en px relativos al #area-drop) =====
         layoutTargets: [
             { type: "comp-header",         x: 8,  y: 20,  w: 1570, h: 80,  weight: 0.20 },
             { type: "comp-titulo",         x: 550,  y: 120,  w: 470, h: 60,  weight: 0.20 },
-            { type: "comp-imagen",         x: 350,  y: 220, w: 320, h: 320, weight: 0.20 }
-            //{ type: "comp-area-texto",     x: 300, y: 100, w: 320, h: 80,  weight: 0.15 },
-            //{ type: "comp-area-texto",     x: 300, y: 200, w: 320, h: 80,  weight: 0.15 },
-            //{ type: "comp-boton-secundario", x: 300, y: 300, w: 180, h: 44,  weight: 0.10 }
+            { type: "comp-imagen",         x: 350,  y: 220, w: 320, h: 320, weight: 0.20 },
+            { type: "comp-area-texto",     x: 750, y: 220, w: 400, h: 160,  weight: 0.15 },
+            { type: "comp-area-texto",     x: 750, y: 400, w: 400, h: 160,  weight: 0.15 },
+            { type: "comp-boton-secundario", x: 420, y: 550, w: 190, h: 50,  weight: 0.10 }
         ],
         tiempoLimite: 300,
         tiempoRecord: null,
@@ -29,7 +30,7 @@ const retos = [
             background: 'url("Assets/fondos/nivel1.png")',
             size: 'cover',
             position: 'top center',
-            opacity: 0.50
+            opacity: 0.70
         },
     },
     {
@@ -43,11 +44,18 @@ const retos = [
         layoutTargets: [
             { type: "comp-campo-entrada",    x: 80,  y: 120, w: 380, h: 44,  weight: 0.45 },
             { type: "comp-boton-secundario", x: 80,  y: 180, w: 160, h: 40,  weight: 0.35 },
-            // Si no usas etiqueta en este reto, deja este target como guía opcional (no afecta completitud):
             { type: "comp-etiqueta",         x: 80,  y: 70,  w: 220, h: 32,  weight: 0.20 }
         ],
         tiempoLimite: 300,
-        tiempoRecord: null
+        tiempoRecord: null,
+        spriteSet: 'nivel2',
+        spriteOverrides: {},
+        fondo: {
+            background: 'url("Assets/fondos/nivel2.png")',
+            size: 'cover',
+            position: 'top center',
+            opacity: 0.70
+        },
     }
 ];
 
@@ -76,13 +84,22 @@ const componentGroups = document.querySelectorAll('#panel-componentes .component
 const papelera = document.getElementById('papelera');
 const STORAGE_KEY = 'designDashProgress_v1';
 const btnBorrar = document.getElementById('btn-borrar-progreso');
+const ACH_STORAGE_KEY = 'designDashAchievements_v1';
+const ACHIEVEMENTS = [
+  { id: 'welcome',   title: '¡Bienvenido, Diseñador!', desc: 'Completa tu primer reto.', icon: '👋' },
+  { id: 'architect', title: 'El Arquitecto Nace',      desc: 'Arrastra y suelta tu primer elemento de interfaz.', icon: '🏗️' },
+  { id: 'marathon',  title: 'Maratón de Diseño',       desc: 'Completa los 2 niveles.', icon: '🏁' },
+  { id: 'symmetry',  title: 'Simetría Perfecta',       desc: 'Crea un diseño perfectamente simétrico.', icon: '🪞' },
+  { id: 'speedrun',  title: 'Contrarreloj',            desc: 'Completa un desafío con tiempo restante significativo.', icon: '⏱️' },
+  { id: 'patpat',    title: 'Pat Pat',                 desc: 'Haz click en Codi el camaleón.', icon: '🦎' }
+];
 const SPRITE_SETS = {
   nivel1: {
     "comp-boton-primario": { src: "Assets/sprites/nivel1/boton-primario.png", w: 320, h: 88,  cls: "sprite--button sprite--nivel1" },
-    "comp-boton-secundario":{ src: "Assets/sprites/nivel1/boton-secundario.png", w: 320, h: 88,  cls: "sprite--button sprite--nivel1" },
+    "comp-boton-secundario":{ src: "Assets/sprites/nivel1/boton-secundario.png", w: 190, h: 90,  cls: "sprite--button sprite--nivel1" },
     "comp-campo-entrada":   { src: "Assets/sprites/nivel1/campo-de-texto.png", w: 640, h: 88,  cls: "sprite--input  sprite--nivel1" },
-    "comp-area-texto":      { src: "Assets/sprites/nivel1/tarjeta-de-texto.png", w: 640, h: 144,  cls: "sprite--input  sprite--nivel1" },
-    "comp-imagen":          { src: "Assets/sprites/nivel1/image.png", w: 440, h: 280, cls: "sprite--image  sprite--nivel1" },
+    "comp-area-texto":      { src: "Assets/sprites/nivel1/tarjeta-de-texto.png", w: 370, h: 150,  cls: "sprite--input  sprite--nivel1" },
+    "comp-imagen":          { src: "Assets/sprites/nivel1/image.png", w: 280, h: 280, cls: "sprite--image  sprite--nivel1" },
     "comp-header":          { src: "Assets/sprites/nivel1/header.png", w: 1540, h: 72,  cls: "sprite--header sprite--nivel1" },
     "comp-titulo":          { src: "Assets/sprites/nivel1/titulo-web.png", w: 440, h: 280, cls: "sprite--title  sprite--nivel1" },
   },                                
@@ -302,118 +319,128 @@ function cargarReto(index) {
 }
 
 function verificarReto() {
-  if (tiempoRestante <= 0 && !intervaloCronometro) {
-    alert("El tiempo ya expiró. Presiona 'Siguiente reto' para continuar.");
-    // Guarda dónde nos quedamos para retomar
-    const p = loadProgress();
-    p.lastRetoIndex = retoActualIndex;
-    saveProgress(p);
-    return;
-  }
-
-  const reto = retos[retoActualIndex];
-  const elementosColocados = document.querySelectorAll('#area-drop .elemento-en-diseno');
-
-  // ----- Completitud -----
-  let conteoActual = {};
-  elementosColocados.forEach(el => {
-    const idOriginal = el.id.replace(/-copia-\d+/, '');
-    conteoActual[idOriginal] = (conteoActual[idOriginal] || 0) + 1;
-  });
-
-  let faltantes = [];
-  for (const [elementoId, cantidadNecesaria] of Object.entries(reto.elementosNecesarios)) {
-    const cantidadActual = conteoActual[elementoId] || 0;
-    if (cantidadActual < cantidadNecesaria) {
-      const nombre = document.getElementById(elementoId)?.textContent || elementoId;
-      faltantes.push(`${cantidadNecesaria - cantidadActual}× ${nombre}`);
+    if (tiempoRestante <= 0 && !intervaloCronometro) {
+        alert("El tiempo ya expiró. Presiona 'Siguiente reto' para continuar.");
+        // Guarda dónde nos quedamos para retomar
+        const p = loadProgress();
+        p.lastRetoIndex = retoActualIndex;
+        saveProgress(p);
+        return;
     }
-  }
 
-  const totalRequeridos = Object.values(reto.elementosNecesarios).reduce((a, b) => a + b, 0);
-  const totalPresentes = Object.entries(reto.elementosNecesarios)
-    .reduce((a, [id, need]) => a + Math.min(need, (conteoActual[id] || 0)), 0);
+    const reto = retos[retoActualIndex];
+    const elementosColocados = document.querySelectorAll('#area-drop .elemento-en-diseno');
 
-  const completitud = totalRequeridos > 0 ? (totalPresentes / totalRequeridos) : 1; // 0..1
+    // ----- Completitud -----
+    let conteoActual = {};
+    elementosColocados.forEach(el => {
+        const idOriginal = el.id.replace(/-copia-\d+/, '');
+        conteoActual[idOriginal] = (conteoActual[idOriginal] || 0) + 1;
+    });
 
-  // ----- Layout (posición) -----
-  const { layoutScore, details } = computeLayoutScore(reto, areaDrop);
-  const pen = overlapPenalty(areaDrop); // 0..1
-  const layoutConPenalizacion = Math.max(0, layoutScore * (1 - 0.5 * pen)); // hasta -50%
+    let faltantes = [];
+    for (const [elementoId, cantidadNecesaria] of Object.entries(reto.elementosNecesarios)) {
+        const cantidadActual = conteoActual[elementoId] || 0;
+        if (cantidadActual < cantidadNecesaria) {
+        const nombre = document.getElementById(elementoId)?.textContent || elementoId;
+        faltantes.push(`${cantidadNecesaria - cantidadActual}× ${nombre}`);
+        }
+    }
 
-  // ----- Puntos -----
-  // Mezcla 50% completitud + 50% layout
-  let puntos = Math.round(100 * (0.5 * completitud + 0.5 * layoutConPenalizacion));
+    const totalRequeridos = Object.values(reto.elementosNecesarios).reduce((a, b) => a + b, 0);
+    const totalPresentes = Object.entries(reto.elementosNecesarios)
+        .reduce((a, [id, need]) => a + Math.min(need, (conteoActual[id] || 0)), 0);
 
-  // Bonus por tiempo (máx +10)
-  const bonusTiempo = Math.min(10, Math.floor((tiempoRestante / (reto.tiempoLimite || 1)) * 10));
-  puntos += bonusTiempo;
+    const completitud = totalRequeridos > 0 ? (totalPresentes / totalRequeridos) : 1; // 0..1
 
-  // Mensaje de detalle
-  let mensajeDetalle =
-    `Puntuación de layout: ${(layoutScore * 100).toFixed(0)}%` +
-    (pen > 0 ? ` (penalización por solapes: ${(pen * 100).toFixed(0)}%)` : ``) +
-    `\nCompletitud: ${(completitud * 100).toFixed(0)}%` +
-    `\nBonus por tiempo: +${bonusTiempo}` +
-    `\n\n➤ Puntos obtenidos: ${puntos}`;
+    // ----- Layout (posición) -----
+    const { layoutScore, details } = computeLayoutScore(reto, areaDrop);
+    const pen = overlapPenalty(areaDrop); // 0..1
+    const layoutConPenalizacion = Math.max(0, layoutScore * (1 - 0.5 * pen)); // hasta -50%
 
-  // Si faltan componentes, no aprueba
-  if (faltantes.length) {
-    alert(`🚨 Faltan: ${faltantes.join(', ')}\n\n${mensajeDetalle}\n\n¡Sigue ajustando!`);
-    setDivDisabled('btn-siguiente', true);
+    // ----- Puntos -----
+    // Mezcla 50% completitud + 50% layout
+    let puntos = Math.round(100 * (0.5 * completitud + 0.5 * layoutConPenalizacion));
 
-    // Guarda lugar para retomar
-    const p = loadProgress();
-    p.lastRetoIndex = retoActualIndex;
-    saveProgress(p);
+    // Bonus por tiempo (máx +10)
+    const bonusTiempo = Math.min(10, Math.floor((tiempoRestante / (reto.tiempoLimite || 1)) * 10));
+    puntos += bonusTiempo;
 
-    console.table(details); // diagnóstico
-    return;
-  }
+    // Mensaje de detalle
+    let mensajeDetalle =
+        `Puntuación de layout: ${(layoutScore * 100).toFixed(0)}%` +
+        (pen > 0 ? ` (penalización por solapes: ${(pen * 100).toFixed(0)}%)` : ``) +
+        `\nCompletitud: ${(completitud * 100).toFixed(0)}%` +
+        `\nBonus por tiempo: +${bonusTiempo}` +
+        `\n\n➤ Puntos obtenidos: ${puntos}`;
 
-  // ----- Aprobado -----
-  detenerCronometro();
-  const tiempoUsado = reto.tiempoLimite - tiempoRestante;
-  let mensaje = "✅ ¡Diseño APROBADO!\n\n" + mensajeDetalle;
+    // Si faltan componentes, no aprueba
+    if (faltantes.length) {
+        alert(`🚨 Faltan: ${faltantes.join(', ')}\n\n${mensajeDetalle}\n\n¡Sigue ajustando!`);
+        setDivDisabled('btn-siguiente', true);
 
-  if (reto.tiempoRecord === null || tiempoUsado < reto.tiempoRecord) {
-    reto.tiempoRecord = tiempoUsado;
-    mensaje += `\n✨ ¡Nuevo récord! Tiempo: ${formatoTiempo(tiempoUsado)}`;
-  } else {
-    mensaje += `\nTiempo: ${formatoTiempo(tiempoUsado)}`;
-  }
+        // Guarda lugar para retomar
+        const p = loadProgress();
+        p.lastRetoIndex = retoActualIndex;
+        saveProgress(p);
 
-  // Habilitar "Siguiente"
-  setDivDisabled('btn-siguiente', false);
+        console.table(details); // diagnóstico
+        return;
+    }
 
-  // Acumular puntos en la sesión actual
-  totalPuntos += puntos;
-  score++;
+    // ----- Aprobado -----
+    detenerCronometro();
+    const tiempoUsado = reto.tiempoLimite - tiempoRestante;
+    let mensaje = "✅ ¡Diseño APROBADO!\n\n" + mensajeDetalle;
 
-  // ===== Guardar progreso persistente =====
-  const progress = loadProgress();
-  const id = reto.id;
+    if (reto.tiempoRecord === null || tiempoUsado < reto.tiempoRecord) {
+        reto.tiempoRecord = tiempoUsado;
+        mensaje += `\n✨ ¡Nuevo récord! Tiempo: ${formatoTiempo(tiempoUsado)}`;
+    } else {
+        mensaje += `\nTiempo: ${formatoTiempo(tiempoUsado)}`;
+    }
 
-  // Mejor puntaje por reto
-  const previo = progress.puntosPorReto?.[id] || 0;
-  progress.puntosPorReto = progress.puntosPorReto || {};
-  progress.puntosPorReto[id] = Math.max(previo, puntos);
+    // Habilitar "Siguiente"
+    setDivDisabled('btn-siguiente', false);
 
-  // Marcar reto como pasado
-  progress.passedPorReto = progress.passedPorReto || {};
-  progress.passedPorReto[id] = true;
+    // Acumular puntos en la sesión actual
+    totalPuntos += puntos;
+    score++;
 
-  // Recalcular total de puntos (suma mejores)
-  progress.totalPuntos = Object.values(progress.puntosPorReto).reduce((a, b) => a + b, 0);
+    // ===== Guardar progreso persistente =====
+    const progress = loadProgress();
+    const id = reto.id;
 
-  // Dónde retomar: primer reto no pasado (o el siguiente si todos pasados)
-  progress.lastRetoIndex = computeResumeIndex(progress);
+    // Mejor puntaje por reto
+    const previo = progress.puntosPorReto?.[id] || 0;
+    progress.puntosPorReto = progress.puntosPorReto || {};
+    progress.puntosPorReto[id] = Math.max(previo, puntos);
 
-  saveProgress(progress);
-  // ========================================
+    // Marcar reto como pasado
+    progress.passedPorReto = progress.passedPorReto || {};
+    progress.passedPorReto[id] = true;
 
-  console.table(details); // diagnóstico por target
-  alert(mensaje);
+    // Recalcular total de puntos (suma mejores)
+    progress.totalPuntos = Object.values(progress.puntosPorReto).reduce((a, b) => a + b, 0);
+
+    // Dónde retomar: primer reto no pasado (o el siguiente si todos pasados)
+    progress.lastRetoIndex = computeResumeIndex(progress);
+
+    unlockAchievement('welcome');
+    // 2) Contrarreloj (ej.: si terminas con ≥ 25% de tiempo restante)
+    const ratioTiempo = (tiempoRestante / (reto.tiempoLimite || 1));
+    if (ratioTiempo >= 0.25) unlockAchievement('speedrun');
+
+    if (checkSymmetry(areaDrop)) unlockAchievement('symmetry');
+
+    saveProgress(progress);
+
+    const todosPasados = retos.every(r => progress.passedPorReto[r.id]);
+    if (todosPasados) unlockAchievement('marathon');
+    // ========================================
+
+    console.table(details); // diagnóstico por target
+    alert(mensaje);
 }
 
 function avanzarReto() {
@@ -488,6 +515,32 @@ function showMascotIntro() {
     const btnNext = modal.querySelector('#mascota-siguiente');
     const btnSkip = modal.querySelector('#mascota-omitir');
     const chkSkip = modal.querySelector('#skip-intro');
+
+    const codiIntroImg = modal.querySelector('.mascota-avatar img');
+    if (codiIntroImg) {
+    codiIntroImg.style.cursor = 'pointer';
+    codiIntroImg.addEventListener('click', () => {
+        // Si tienes helpers de logros:
+        if (typeof unlockAchievement === 'function') {
+        const justUnlocked = unlockAchievement('patpat');
+        if (justUnlocked) {
+            // feedback visual rápido
+            codiIntroImg.classList.add('patpat-anim');
+            setTimeout(() => codiIntroImg.classList.remove('patpat-anim'), 500);
+        }
+        } else {
+        // Fallback sin helpers: marcar directamente en localStorage
+        try {
+            const key = 'designDashAchievements_v1';
+            const map = JSON.parse(localStorage.getItem(key) || '{}');
+            if (!map.patpat) {
+            map.patpat = { unlockedAt: Date.now() };
+            localStorage.setItem(key, JSON.stringify(map));
+            }
+        } catch {}
+        }
+    });
+    }
 
     function typeWriter(full, speed = 18) {
     clearInterval(typingTimer);
@@ -579,10 +632,13 @@ function computeResumeIndex(progress) {
 
 // Nueva partida
 function resetProgress() {
-    localStorage.removeItem('designDashProgress_v1');
-    localStorage.removeItem('skipMascotIntro');
-    alert("Progreso borrado.");
+  localStorage.removeItem('designDashProgress_v1');
+  localStorage.removeItem('skipMascotIntro');
+  // NUEVO: limpia logros (opcional)
+  localStorage.removeItem(ACH_STORAGE_KEY);
+  alert("Progreso y logros borrados.");
 }
+
 
 function aplicarFondoReto(reto) {
     const f = reto?.fondo || {};
@@ -646,6 +702,111 @@ function applySprite(el, baseType) {
     return true;
 }
 
+function loadAchievements() {
+    try {
+        return JSON.parse(localStorage.getItem(ACH_STORAGE_KEY)) || {};
+    } catch { return {}; }
+}
+
+function saveAchievements(map) {
+    localStorage.setItem(ACH_STORAGE_KEY, JSON.stringify(map || {}));
+}
+
+function isAchUnlocked(id) {
+    const map = loadAchievements();
+    return !!map[id];
+}
+
+function unlockAchievement(id) {
+    const map = loadAchievements();
+    if (map[id]) return false; // ya estaba
+    map[id] = { unlockedAt: Date.now() };
+    saveAchievements(map);
+    // feedback rápido
+    console.log('🏆 Logro desbloqueado:', id);
+    // si quieres, muestra un toast / mini badge aquí
+    return true;
+}
+
+function renderAchievementsModal() {
+    const grid = document.getElementById('ach-grid');
+    if (!grid) return;
+    const map = loadAchievements();
+    grid.innerHTML = '';
+
+    ACHIEVEMENTS.forEach(a => {
+        const unlocked = !!map[a.id];
+        const card = document.createElement('div');
+        card.className = 'ach-card' + (unlocked ? ' unlocked' : '');
+        card.innerHTML = `
+            <div class="ach-badge">Desbloqueado</div>
+            <div class="ach-icon-frame ${unlocked ? '' : 'ach-locked'}">
+                <img src="Assets/logros/${a.id}.png" alt="${a.title}">
+            </div>
+            <div class="ach-title">${a.title}</div>
+            <div class="ach-desc">${a.desc}</div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function openAchievements() {
+    renderAchievementsModal();
+    const ov = document.getElementById('achievements-overlay');
+    if (ov) ov.setAttribute('aria-hidden', 'false');
+}
+
+function closeAchievements() {
+    const ov = document.getElementById('achievements-overlay');
+    if (ov) ov.setAttribute('aria-hidden', 'true');
+}
+
+function checkSymmetry(area) {
+    const els = Array.from(area.querySelectorAll('.elemento-en-diseno'));
+    if (els.length < 2) return false;
+
+    const centerX = area.clientWidth / 2;
+    const tol = 8; // tolerancia en px
+    // Representa por baseType y por "lado"
+    const items = els.map(el => {
+        const rect = el.getBoundingClientRect();
+        const parentRect = area.getBoundingClientRect();
+        const left = parseFloat(el.style.left) || (rect.left - parentRect.left + area.scrollLeft);
+        const top  = parseFloat(el.style.top)  || (rect.top  - parentRect.top  + area.scrollTop);
+        return {
+        base: el.id.replace(/-copia-\d+$/, ''),
+        x: left, y: top, w: el.offsetWidth, h: el.offsetHeight
+        };
+    });
+
+    // Intenta emparejar cada elemento con su espejo
+    let paired = 0, used = new Set();
+    for (let i = 0; i < items.length; i++) {
+        if (used.has(i)) continue;
+        const a = items[i];
+        // coordenada espejo ideal
+        const mirrorX = 2*centerX - (a.x + a.w);
+        for (let j = i + 1; j < items.length; j++) {
+        if (used.has(j)) continue;
+        const b = items[j];
+        if (a.base !== b.base) continue;
+        const sameY = Math.abs(a.y - b.y) <= tol;
+        const sameW = Math.abs(a.w - b.w) <= tol;
+        const mirrored = Math.abs(b.x - mirrorX) <= tol;
+        if (sameY && sameW && mirrored) {
+            used.add(i); used.add(j);
+            paired += 2;
+            break;
+        }
+        }
+    }
+
+    // Si el 100% están emparejados (o ≥ 80% si quieres permisivo)
+    const ratio = paired / items.length;
+    const ok = ratio >= 0.8;
+    return ok;
+}
+
 // ===============================================
 // EVENTOS PRINCIPALES
 // ===============================================
@@ -689,6 +850,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const source = e.dataTransfer.getData('source');
         if (source !== 'panel') return;
+
+        if (typeof unlockAchievement === 'function') {
+            unlockAchievement('architect');
+        }    
 
         const idOriginal = e.dataTransfer.getData('text/plain');
         const original = document.getElementById(idOriginal);
@@ -862,5 +1027,17 @@ document.addEventListener('DOMContentLoaded', () => {
         resetProgress();
         }
     });
+    }
+    const btnLogros = document.getElementById('btn-logros');
+    if (btnLogros) btnLogros.addEventListener('click', openAchievements);
+
+    const achClose = document.getElementById('ach-close');
+    if (achClose) achClose.addEventListener('click', closeAchievements);
+
+    const achOverlay = document.getElementById('achievements-overlay');
+    if (achOverlay) {
+        achOverlay.addEventListener('click', (e) => {
+            if (e.target === achOverlay) closeAchievements();
+        });
     }
 });
