@@ -42,9 +42,14 @@ const retos = [
             "comp-boton-secundario": 1,
         },
         layoutTargets: [
-            { type: "comp-campo-entrada",    x: 80,  y: 120, w: 380, h: 44,  weight: 0.45 },
-            { type: "comp-boton-secundario", x: 80,  y: 180, w: 160, h: 40,  weight: 0.35 },
-            { type: "comp-etiqueta",         x: 80,  y: 70,  w: 220, h: 32,  weight: 0.20 }
+            { type: "comp-header",         x: 8,  y: 20,  w: 1570, h: 120,  weight: 0.20 },
+            { type: "comp-titulo", x: 500, y: 160, w: 500, h: 70, weight: 0.10 },
+            { type: "comp-imagen", x: 160, y: 270, w: 320, h: 320, weight: 0.15 },
+            { type: "comp-area-texto", x: 520, y: 280, w: 270, h: 170, weight: 0.10 },
+            { type: "comp-area-texto", x: 800, y: 280, w: 270, h: 170, weight: 0.10 },
+            { type: "comp-campo-entrada", x: 1050, y: 170, w: 330, h: 50, weight: 0.10 },
+            { type: "comp-boton-primario", x: 540, y: 470, w: 180, h: 50, weight: 0.15 },
+            { type: "comp-boton-secundario", x: 800, y: 470, w: 180, h: 50, weight: 0.10 },
         ],
         tiempoLimite: 300,
         tiempoRecord: null,
@@ -103,13 +108,14 @@ const SPRITE_SETS = {
     "comp-header":          { src: "Assets/sprites/nivel1/header.png", w: 1540, h: 72,  cls: "sprite--header sprite--nivel1" },
     "comp-titulo":          { src: "Assets/sprites/nivel1/titulo-web.png", w: 440, h: 280, cls: "sprite--title  sprite--nivel1" },
   },                                
-  neon: {
-    "comp-boton-primario": { src: "Assets/sprites/neon/btn_primary.png",  w: 160, h: 48,  cls: "sprite--button sprite--neon" },
-    "comp-boton-secundario":{ src: "Assets/sprites/neon/btn_secondary.png",w: 160, h: 48,  cls: "sprite--button sprite--neon" },
-    "comp-campo-entrada":   { src: "Assets/sprites/neon/input.png",       w: 320, h: 44,  cls: "sprite--input  sprite--neon" },
-    "comp-area-texto":      { src: "Assets/sprites/neon/textarea.png",    w: 320, h: 96,  cls: "sprite--input  sprite--neon" },
-    "comp-imagen":          { src: "Assets/sprites/neon/image_frame.png", w: 220, h: 140, cls: "sprite--image  sprite--neon" },
-    "comp-header":          { src: "Assets/sprites/neon/header.png",      w: 480, h: 72,  cls: "sprite--header sprite--neon" }
+  nivel2: {
+    "comp-boton-primario": { src: "Assets/sprites/nivel2/boton-primario.png", w: 320, h: 88,  cls: "sprite--button sprite--nivel2" },
+    "comp-boton-secundario":{ src: "Assets/sprites/nivel2/boton-secundario.png", w: 190, h: 90,  cls: "sprite--button sprite--nivel2" },
+    "comp-campo-entrada":   { src: "Assets/sprites/nivel2/campo-de-texto.png", w: 640, h: 88,  cls: "sprite--input  sprite--nivel2" },
+    "comp-area-texto":      { src: "Assets/sprites/nivel2/tarjeta-de-texto.png", w: 370, h: 150,  cls: "sprite--input  sprite--nivel2" },
+    "comp-imagen":          { src: "Assets/sprites/nivel2/image.png", w: 280, h: 280, cls: "sprite--image  sprite--nivel2" },
+    "comp-header":          { src: "Assets/sprites/nivel2/header.png", w: 1540, h: 100,  cls: "sprite--header sprite--nivel2" },
+    "comp-titulo":          { src: "Assets/sprites/nivel2/titulo-web.png", w: 440, h: 280, cls: "sprite--title  sprite--nivel2" },
   }
 };
 
