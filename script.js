@@ -6,7 +6,7 @@ const retos = [
     {
         id: 1,
         titulo: "Página de Animales Extintos",
-        descripcion: "Crea una página de información simple. Necesitas una imagen, un botón primario y dos áreas de texto para la descripción.",
+        descripcion: "Crea una página de información simple. Necesitas una imagen, un botón secundario y dos áreas de texto para la descripción de la imagen.",
         elementosNecesarios: {
             "comp-imagen": 1,
             "comp-boton-primario": 1,
@@ -14,10 +14,12 @@ const retos = [
         },
         // ===== Plantilla de layout (en px relativos al #area-drop) =====
         layoutTargets: [
-            { type: "comp-imagen",         x: 40,  y: 100, w: 220, h: 140, weight: 0.40 },
-            { type: "comp-area-texto",     x: 300, y: 100, w: 320, h: 80,  weight: 0.15 },
-            { type: "comp-area-texto",     x: 300, y: 200, w: 320, h: 80,  weight: 0.15 },
-            { type: "comp-boton-primario", x: 300, y: 300, w: 180, h: 44,  weight: 0.30 }
+            { type: "comp-header",         x: 8,  y: 20,  w: 1570, h: 80,  weight: 0.20 },
+            { type: "comp-titulo",         x: 550,  y: 120,  w: 470, h: 60,  weight: 0.20 },
+            { type: "comp-imagen",         x: 350,  y: 220, w: 320, h: 320, weight: 0.20 }
+            //{ type: "comp-area-texto",     x: 300, y: 100, w: 320, h: 80,  weight: 0.15 },
+            //{ type: "comp-area-texto",     x: 300, y: 200, w: 320, h: 80,  weight: 0.15 },
+            //{ type: "comp-boton-secundario", x: 300, y: 300, w: 180, h: 44,  weight: 0.10 }
         ],
         tiempoLimite: 300,
         tiempoRecord: null,
@@ -27,7 +29,7 @@ const retos = [
             background: 'url("Assets/fondos/nivel1.png")',
             size: 'cover',
             position: 'top center',
-            opacity: 0.22
+            opacity: 0.50
         },
     },
     {
@@ -76,12 +78,13 @@ const STORAGE_KEY = 'designDashProgress_v1';
 const btnBorrar = document.getElementById('btn-borrar-progreso');
 const SPRITE_SETS = {
   nivel1: {
-    "comp-boton-primario": { src: "Assets/sprites/nivel1/header.png",  w: 160, h: 48,  cls: "sprite--button sprite--nivel1" },
-    "comp-boton-secundario":{ src: "Assets/sprites/nivel1/btn_secondary.png",w: 160, h: 48,  cls: "sprite--button sprite--nivel1" },
-    "comp-campo-entrada":   { src: "Assets/sprites/nivel1/input.png",       w: 320, h: 44,  cls: "sprite--input  sprite--nivel1" },
-    "comp-area-texto":      { src: "Assets/sprites/nivel1/textarea.png",    w: 320, h: 96,  cls: "sprite--input  sprite--nivel1" },
-    "comp-imagen":          { src: "Assets/sprites/nivel1/image_frame.png", w: 220, h: 140, cls: "sprite--image  sprite--nivel1" },
-    "comp-header":          { src: "Assets/sprites/nivel1/header.png",      w: 480, h: 72,  cls: "sprite--header sprite--nivel1" }
+    "comp-boton-primario": { src: "Assets/sprites/nivel1/boton-primario.png", w: 320, h: 88,  cls: "sprite--button sprite--nivel1" },
+    "comp-boton-secundario":{ src: "Assets/sprites/nivel1/boton-secundario.png", w: 320, h: 88,  cls: "sprite--button sprite--nivel1" },
+    "comp-campo-entrada":   { src: "Assets/sprites/nivel1/campo-de-texto.png", w: 640, h: 88,  cls: "sprite--input  sprite--nivel1" },
+    "comp-area-texto":      { src: "Assets/sprites/nivel1/tarjeta-de-texto.png", w: 640, h: 144,  cls: "sprite--input  sprite--nivel1" },
+    "comp-imagen":          { src: "Assets/sprites/nivel1/image.png", w: 440, h: 280, cls: "sprite--image  sprite--nivel1" },
+    "comp-header":          { src: "Assets/sprites/nivel1/header.png", w: 1540, h: 72,  cls: "sprite--header sprite--nivel1" },
+    "comp-titulo":          { src: "Assets/sprites/nivel1/titulo-web.png", w: 440, h: 280, cls: "sprite--title  sprite--nivel1" },
   },                                
   neon: {
     "comp-boton-primario": { src: "Assets/sprites/neon/btn_primary.png",  w: 160, h: 48,  cls: "sprite--button sprite--neon" },
@@ -460,7 +463,7 @@ function showMascotIntro() {
     modal.className = 'mascota-modal';
     modal.innerHTML = `
     <div class="mascota-avatar">
-        <img src="Assets/Codi_Animado.gif" alt="Codi, la mascota">
+        <img src="Assets/Codi_Hablando.gif" alt="Codi, la mascota">
     </div>
     <div class="mascota-content">
         <div class="mascota-bubble">
